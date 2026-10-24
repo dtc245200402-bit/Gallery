@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hệ thống quản lý thư viện ảnh và chia sẻ album">
+  <title>Gallery | Thư viện ảnh</title>
+  <link rel="stylesheet" href="/styles.css?v=10">
+  <script src="/app.js?v=15" defer></script>
+</head>
+<body>
+  <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="icon-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="icon-album" viewBox="0 0 24 24"><rect x="3" y="4" width="15" height="16" rx="2"/><path d="M7 4V3h14v15h-3M6 16l3-3 3 3 2-2 3 3M9 9h.01"/></symbol>
+    <symbol id="icon-upload" viewBox="0 0 24 24"><path d="M12 16V4m-5 5 5-5 5 5M4 16v4h16v-4"/></symbol>
+    <symbol id="icon-tag" viewBox="0 0 24 24"><path d="M20 13 13 20a2 2 0 0 1-3 0l-6-6V4h10l6 6a2 2 0 0 1 0 3Z"/><circle cx="8.5" cy="8.5" r="1"/></symbol>
+    <symbol id="icon-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.5 6.6-4m-6.6 7 6.6 4"/></symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></symbol>
+    <symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5m7 7-7-7 7-7"/></symbol>
+    <symbol id="icon-edit" viewBox="0 0 24 24"><path d="m15 5 4 4M4 20l4-.8L19 8a2.8 2.8 0 0 0-4-4L4 15z"/></symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24"><path d="M4 7h16m-10 4v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></symbol>
+    <symbol id="icon-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></symbol>
+    <symbol id="icon-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3m-4 5v2"/></symbol>
+    <symbol id="icon-sparkle" viewBox="0 0 24 24"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z"/></symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  </svg>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Gallery trang chủ"><span class="brand-mark"><svg class="icon"><use href="#icon-image"></use></svg></span><span>gallery<span class="brand-dot">.</span></span></a>
+    <div class="topbar-right"><span class="secure-indicator"><span class="status-dot"></span> Thư viện ảnh</span><button id="logoutBtn" class="button button-quiet hidden" type="button">Đăng xuất</button></div>
+  </header>
+
+  <main id="loginView" class="login-layout hidden">
+    <section class="login-copy">
+      <p class="eyebrow">YOUR VISUAL ARCHIVE</p>
+      <h1>Mọi khoảnh khắc,<br><span>ở đúng nơi.</span></h1>
+      <p class="subcopy">Lưu trữ, phân loại và chia sẻ những bức ảnh của bạn trong một không gian gọn gàng.</p>
+      <div class="feature-row"><span class="feature-icon"><svg class="icon"><use href="#icon-album"></use></svg></span><div><strong>Album có tổ chức</strong><small>Phân loại ảnh theo chủ đề</small></div></div>
+      <div class="feature-row"><span class="feature-icon"><svg class="icon"><use href="#icon-share"></use></svg></span><div><strong>Chia sẻ bằng liên kết</strong><small>Gửi album cho người khác xem</small></div></div>
+    </section>
+    <section class="login-card">
+      <div class="card-icon"><svg class="icon"><use href="#icon-sparkle"></use></svg></div><h2>Chào mừng trở lại</h2><p class="muted">Đăng nhập vào khu vực quản lý.</p>
+      <form id="loginForm" class="form-stack">
+        <label for="username">Tên đăng nhập</label><input id="username" name="username" autocomplete="username" required maxlength="100" placeholder="Nhập tên đăng nhập">
+        <label for="password">Mật khẩu</label><input id="password" name="password" type="password" autocomplete="current-password" required maxlength="200" placeholder="Nhập mật khẩu">
+        <button class="button button-primary button-full" type="submit">Đăng nhập <svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+        <p id="loginError" class="form-error" role="alert"></p>
+      </form>
+      <p class="security-note"><svg class="icon"><use href="#icon-lock"></use></svg> Phiên đăng nhập được bảo vệ</p>
+    </section>
+  </main>
+
+  <main id="appView" class="app-layout hidden">
+    <aside class="sidebar">
+      <div class="sidebar-label">QUẢN LÝ THƯ VIỆN</div>
+      <nav class="module-nav" aria-label="Chức năng quản lý">
+        <button class="nav-item active" type="button" data-view="dashboard"><span class="nav-icon"><svg class="icon"><use href="#icon-home"></use></svg></span> Tổng quan</button>
+        <button class="nav-item" type="button" data-view="albums"><span class="nav-icon"><svg class="icon"><use href="#icon-album"></use></svg></span> Album ảnh</button>
+        <button class="nav-item" type="button" data-view="upload"><span class="nav-icon"><svg class="icon"><use href="#icon-upload"></use></svg></span> Tải ảnh lên</button>
+        <button class="nav-item" type="button" data-view="categories"><span class="nav-icon"><svg class="icon"><use href="#icon-tag"></use></svg></span> Phân loại</button>
+        <button class="nav-item" type="button" data-view="sharing"><span class="nav-icon"><svg class="icon"><use href="#icon-share"></use></svg></span> Chia sẻ</button>
+      </nav>
+      <div class="sidebar-bottom"><div class="profile-avatar">A</div><div class="profile-meta"><strong id="signedInUser">Admin</strong><small>Quản trị viên</small></div><span class="profile-status"></span></div>
+    </aside>
+    <section class="workspace">
+      <div class="page-heading"><div><p class="eyebrow" id="pageEyebrow">TỔNG QUAN</p><h1 id="pageTitle">Tổng quan thư viện</h1><p class="muted" id="pageDescription">Theo dõi nhanh bộ sưu tập ảnh của bạn.</p></div><button id="scrollCreateBtn" class="button button-primary hidden" type="button"><svg class="icon"><use href="#icon-plus"></use></svg> Tạo album</button></div>
+      <section class="module-view" id="dashboardView">
+        <section class="overview-welcome" aria-labelledby="welcomeHeading">
+          <div class="overview-welcome-copy"><p class="eyebrow">THƯ VIỆN ẢNH CỦA BẠN</p><h2 id="welcomeHeading">Chào mừng quay trở lại, <span id="welcomeAdminName">ADMIN</span></h2><p>Lưu giữ và sắp xếp những khoảnh khắc đáng nhớ của bạn.</p></div>
+          <button class="button button-primary" id="overviewCreateAlbum" type="button"><svg class="icon"><use href="#icon-plus"></use></svg> Tạo album mới</button>
+        </section>
+        <div class="stats-grid overview-stats">
+          <article class="stat-card"><div class="stat-symbol violet"><svg class="icon"><use href="#icon-album"></use></svg></div><div><p>Tổng album</p><strong id="overviewAlbumCount">0</strong></div><span class="stat-caption">Bộ sưu tập</span></article>
+          <article class="stat-card"><div class="stat-symbol teal"><svg class="icon"><use href="#icon-image"></use></svg></div><div><p>Tổng hình ảnh</p><strong id="overviewPhotoCount">0</strong></div><span class="stat-caption">Đã lưu trữ</span></article>
+          <article class="stat-card"><div class="stat-symbol orange"><svg class="icon"><use href="#icon-tag"></use></svg></div><div><p>Phân loại</p><strong id="overviewCategoryCount">0</strong></div><span class="stat-caption">Chủ đề</span></article>
+        </div>
+        <section class="panel overview-albums-panel">
+          <div class="panel-heading"><div><h2>Album gần đây</h2><p class="muted">Mở một album để xem các ảnh bên trong.</p></div><button class="button button-outline" id="overviewAllAlbums" type="button">Tất cả album <svg class="icon"><use href="#icon-arrow-right"></use></svg></button></div>
+          <div id="overviewAlbumList" class="overview-album-grid"><div class="empty-state">Đang tải album...</div></div>
+        </section>
+      </section>
+      <section class="module-view" id="albumsView">
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-symbol violet"><svg class="icon"><use href="#icon-album"></use></svg></div><div><p>Tổng album</p><strong id="albumCount">0</strong></div><span class="stat-caption">Bộ sưu tập</span></article>
+          <article class="stat-card"><div class="stat-symbol teal"><svg class="icon"><use href="#icon-image"></use></svg></div><div><p>Tổng hình ảnh</p><strong id="photoCount">0</strong></div><span class="stat-caption">Đã lưu trữ</span></article>
+          <article class="stat-card"><div class="stat-symbol orange"><svg class="icon"><use href="#icon-tag"></use></svg></div><div><p>Phân loại</p><strong id="categoryCount">0</strong></div><span class="stat-caption">Chủ đề</span></article>
+        </div>
+        <div class="content-grid">
+          <section class="panel album-panel">
+            <div class="panel-heading"><div><h2>Album của bạn</h2><p class="muted">Mở album để xem ảnh hoặc quản lý thông tin.</p></div><span class="count-pill" id="albumPill">0 album</span></div>
+            <div id="albumList" class="album-list"><div class="empty-state">Đang tải album...</div></div>
+          </section>
+        </div>
+      </section>
+      <section class="module-view hidden" id="albumDetailView">
+        <section class="panel photo-panel">
+          <div class="panel-heading photo-heading">
+            <div><h2 id="photoHeading">Hình ảnh</h2><p id="photoSubheading" class="muted">Ảnh trong album đã chọn.</p></div>
+            <button class="button button-outline" id="backToAlbums" type="button"><svg class="icon"><use href="#icon-arrow-left"></use></svg> Danh sách album</button>
+          </div>
+          <div id="photoGrid" class="photo-grid"><div class="empty-state photo-empty"><div class="empty-icon"><svg class="icon"><use href="#icon-image"></use></svg></div><strong>Đang tải ảnh...</strong></div></div>
+        </section>
+      </section>
+      <section class="module-view hidden" id="createAlbumView">
+        <section class="panel album-form-panel">
+          <div class="panel-heading"><div><h2>Tạo album mới</h2><p class="muted">Bắt đầu một bộ sưu tập mới.</p></div><span class="create-glyph"><svg class="icon"><use href="#icon-plus"></use></svg></span></div>
+          <form id="createAlbumForm" class="form-stack album-form-grid">
+            <div><label for="albumName">Tên album <span class="required">*</span></label><input id="albumName" name="name" required maxlength="120" placeholder="Ví dụ: Chuyến đi Đà Lạt"></div>
+            <div><label for="albumCategory">Phân loại</label><select id="albumCategory" name="category"><option>Du lịch</option><option>Gia đình</option><option>Bạn bè</option><option>Thiên nhiên</option><option>Công việc</option><option>Ẩm thực</option><option>Khác</option></select></div>
+            <div class="album-description-field"><label for="albumDescription">Mô tả</label><textarea id="albumDescription" name="description" rows="3" maxlength="1000" placeholder="Một vài dòng về bộ sưu tập..."></textarea></div>
+            <div class="album-form-actions"><button class="button button-primary" type="submit">Tạo album <svg class="icon"><use href="#icon-arrow-right"></use></svg></button><button class="button button-outline" id="cancelCreateAlbum" type="button">Hủy</button></div>
+          </form>
+        </section>
+      </section>
+      <section class="module-view hidden" id="editAlbumView">
+        <section class="panel edit-panel">
+          <div class="panel-heading"><div><h2>Sửa thông tin album</h2><p class="muted">Cập nhật tên, phân loại hoặc mô tả bộ sưu tập.</p></div><span class="create-glyph"><svg class="icon"><use href="#icon-edit"></use></svg></span></div>
+          <form id="editAlbumForm" class="form-stack album-form-grid">
+            <input id="editAlbumId" name="id" type="hidden">
+            <div><label for="editAlbumName">Tên album <span class="required">*</span></label><input id="editAlbumName" name="name" required maxlength="120"></div>
+            <div><label for="editAlbumCategory">Phân loại</label><select id="editAlbumCategory" name="category"><option>Du lịch</option><option>Gia đình</option><option>Bạn bè</option><option>Thiên nhiên</option><option>Công việc</option><option>Ẩm thực</option><option>Khác</option></select></div>
+            <div class="album-description-field"><label for="editAlbumDescription">Mô tả</label><textarea id="editAlbumDescription" name="description" rows="3" maxlength="1000" placeholder="Một vài dòng về bộ sưu tập..."></textarea></div>
+            <div class="album-form-actions"><button class="button button-primary" type="submit">Lưu thay đổi</button><button class="button button-outline" id="cancelEditAlbum" type="button">Hủy</button></div>
+          </form>
+        </section>
+      </section>
+      <section class="module-view hidden" id="uploadView">
+        <section class="panel upload-panel">
+          <div class="panel-heading"><div><h2>Tải ảnh vào album</h2><p class="muted">Chọn album, phân loại và tải lên tối đa 5 ảnh cùng lúc.</p></div><span class="create-glyph"><svg class="icon"><use href="#icon-upload"></use></svg></span></div>
+          <form id="uploadForm" class="form-stack upload-stack">
+            <label for="uploadAlbumSelect">Album nhận ảnh</label><select id="uploadAlbumSelect" required><option value="">Chọn album</option></select>
+            <label for="uploadCategory">Phân loại ảnh</label><select id="uploadCategory" name="category"><option>Du lịch</option><option>Gia đình</option><option>Bạn bè</option><option>Thiên nhiên</option><option>Công việc</option><option>Ẩm thực</option><option>Khác</option></select>
+            <label for="photoFile">Chọn tệp ảnh</label><label for="photoFile" class="upload-dropzone"><span class="upload-drop-icon"><svg class="icon"><use href="#icon-plus"></use></svg></span><strong id="uploadFileName">Chọn một hoặc nhiều ảnh</strong><small>Tối đa 5 ảnh cùng lúc, 10 MB mỗi ảnh · JPG, PNG, WEBP, GIF</small></label><input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden>
+            <button class="button button-primary" id="uploadBtn" type="submit" disabled>Tải ảnh lên <svg class="icon"><use href="#icon-arrow-right"></use></svg></button>
+          </form>
+        </section>
+      </section>
+      <section class="module-view hidden" id="categoriesView">
+        <section class="panel">
+          <div class="panel-heading"><div><h2>Phân loại từng ảnh</h2><p class="muted">Gán chủ đề cho từng tấm ảnh, không chỉ cho cả album.</p></div><div class="category-toolbar"><span class="count-pill" id="categoryPhotoCount">0 ảnh</span><select id="photoCategoryFilter" aria-label="Lọc ảnh theo phân loại"><option value="">Tất cả chủ đề</option><option>Du lịch</option><option>Gia đình</option><option>Bạn bè</option><option>Thiên nhiên</option><option>Công việc</option><option>Ẩm thực</option><option>Khác</option></select></div></div>
+          <div id="photoCategoryList" class="category-album-list"><div class="empty-state">Đang tải ảnh...</div></div>
+        </section>
+      </section>
+      <section class="module-view hidden" id="sharingView">
+        <section class="panel">
+          <div class="panel-heading"><div><h2>Liên kết chia sẻ</h2><p class="muted">Tạo liên kết xem album hoặc thu hồi liên kết đã cấp.</p></div></div>
+          <div id="sharingAlbumList" class="album-list"><div class="empty-state">Đang tải album...</div></div>
+          <div class="panel-heading sharing-photos-heading"><div><h2>Chia sẻ ảnh riêng lẻ</h2><p class="muted">Tạo liên kết riêng cho từng ảnh, hoặc thu hồi khi không còn muốn chia sẻ.</p></div></div>
+          <div id="sharingPhotoGrid" class="photo-grid"><div class="empty-state">Đang tải ảnh...</div></div>
+        </section>
+      </section>
+      <footer class="footer-note"><span>GALLERY SYSTEM</span><span>Được xây dựng để lưu giữ khoảnh khắc.</span></footer>
+    </section>
+  </main>
+
+  <main id="shareRoot" class="share-layout hidden"><div class="share-top"><a class="brand" href="/"><span class="brand-mark"><svg class="icon"><use href="#icon-image"></use></svg></span><span>gallery<span class="brand-dot">.</span></span></a><span class="share-label">NỘI DUNG ĐƯỢC CHIA SẺ</span></div><section id="sharedAlbumContent" class="shared-content"><div class="empty-state">Đang tải nội dung được chia sẻ...</div></section></main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+local.file_match "gallery_logs" {
+  path_targets = [{"__path__" = "/var/log/gallery/*.log", "job" = "gallery-app"}]
+}
+
+local.file_match "nginx_logs" {
+  path_targets = [{"__path__" = "/var/log/nginx-files/*.log", "job" = "nginx"}]
+}
+
+loki.source.file "gallery_logs" {
+  targets    = local.file_match.gallery_logs.targets
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.source.file "nginx_logs" {
+  targets    = local.file_match.nginx_logs.targets
+  forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
