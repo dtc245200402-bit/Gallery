@@ -1,0 +1,79 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: gallery-gmail
+    receivers:
+      - uid: gallery-gmail
+        type: email
+        settings:
+          addresses: "${GRAFANA_ALERT_EMAIL}"
+          singleEmail: false
+        disableResolveMessage: false
+
+policies:
+  - orgId: 1
+    receiver: gallery-gmail
+    group_by:
+      - alertname
+    routes:
+      - receiver: gallery-gmail
+        object_matchers:
+          - ["service", "=", "gallery"]
+
+groups:
+  - orgId: 1
+    name: Gallery HTTP errors
+    folder: Gallery
+    interval: 1m
+    rules:
+      - uid: gallery-http-5xx
+        title: Gallery HTTP 5xx detected
+        condition: B
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 900
+              to: 0
+            datasourceUid: Prometheus
+            model:
+              editorMode: code
+              expr: sum(increase(gallery_http_requests_total{status_code=~"5.."}[15m])) or vector(0)
+              instant: true
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - A
+                  reducer:
+                    type: last
+                    params: []
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: B
+              type: classic_conditions
+        noDataState: NoData
+        execErrState: Error
+        for: 1m
+        annotations:
+          summary: Gallery is returning HTTP 5xx responses
+          description: One or more HTTP 5xx responses were recorded in the last fifteen minutes.
+        labels:
+          severity: warning
+          service: gallery

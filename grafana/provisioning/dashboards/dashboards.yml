@@ -1,0 +1,10 @@
+apiVersion: 1
+providers:
+  - name: Gallery
+    orgId: 1
+    folder: Gallery
+    type: file
+    disableDeletion: true
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards
